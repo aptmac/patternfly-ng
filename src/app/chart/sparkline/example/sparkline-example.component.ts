@@ -5,6 +5,7 @@ import {
 } from '@angular/core';
 
 import { SparklineConfig } from '../sparkline-config';
+import { Observable, Subscription } from 'rxjs';
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -13,6 +14,8 @@ import { SparklineConfig } from '../sparkline-config';
 })
 export class SparklineExampleComponent implements OnInit {
   dates: any[] = ['dates'];
+  timer: Subscription;
+  isDynamic = false;
   chartData: any = {
     dataAvailable: true,
     total: 100,
@@ -40,4 +43,18 @@ export class SparklineExampleComponent implements OnInit {
       this.chartData.xData[this.chartData.xData.length - 1].getTime() + (24 * 60 * 60 * 1000)));
     this.chartData.yData.push(Math.round(Math.random() * 100));
   }
+
+  toggleDynamicUpdate(): void {
+    this.isDynamic = !this.isDynamic;
+    if (this.isDynamic) {
+      this.timer = Observable
+        .timer(0, 3000)
+        .subscribe(() => {
+          this.addDataPoint();
+        });
+    } else {
+      this.timer.unsubscribe();
+    }
+  }
+
 }
